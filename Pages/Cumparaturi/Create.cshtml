@@ -1,0 +1,42 @@
+﻿@page
+@model Coffe_Project.Pages.Cumparaturi.CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Cumparare</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Cumparare.CumparatorID" class="control-label"></label>
+                <select asp-for="Cumparare.CumparatorID" class ="form-control" asp-items="ViewBag.CumparatorID"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cumparare.CoffeID" class="control-label"></label>
+                <select asp-for="Cumparare.CoffeID" class ="form-control" asp-items="ViewBag.CoffeID"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cumparare.ReturnDate" class="control-label"></label>
+                <input asp-for="Cumparare.ReturnDate" class="form-control" />
+                <span asp-validation-for="Cumparare.ReturnDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

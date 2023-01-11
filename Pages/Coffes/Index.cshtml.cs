@@ -25,10 +25,13 @@ namespace Coffe_Project.Pages.Coffes
         public int CoffeID { get; set; }
         public int CategoryID { get; set; }
 
+        public string CurrentFilter { get; set; }
 
-        public async Task OnGetAsync(int? id, int? categoryID)
+        public async Task OnGetAsync(int? id, int? categoryID, string searchString)
         {
             CoffeD = new CoffeData();
+
+            CurrentFilter = searchString;
 
             CoffeD.Coffe = await _context.Coffe
             .Include(b => b.Distribuitor)
@@ -37,7 +40,13 @@ namespace Coffe_Project.Pages.Coffes
             .AsNoTracking()
             .OrderBy(b => b.Denumire)
             .ToListAsync();
-            if (id != null)
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                CoffeD.Coffe = CoffeD.Coffe.Where(s => s.Origine.Contains(searchString)
+               || s.Denumire.Contains(searchString));
+            }
+                if (id != null)
             {
                 CoffeID = id.Value;
                 Coffe coffe = CoffeD.Coffe

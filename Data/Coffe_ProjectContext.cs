@@ -19,5 +19,9 @@ namespace Coffe_Project.Data
         public DbSet<Coffe_Project.Models.Distribuitor> Distribuitor { get; set; }
 
         public DbSet<Coffe_Project.Models.Category> Category { get; set; }
+
+        public DbSet<Coffe_Project.Models.Cumparator> Cumparator { get; set; }
+
+        public DbSet<Coffe_Project.Models.Cumparare> Cumparare { get; set; }
     }
 }

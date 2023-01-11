@@ -1,12 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Coffe_Project.Data;
+using Microsoft.AspNetCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<Coffe_ProjectContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Coffe_ProjectContext") ?? throw new InvalidOperationException("Connection string 'Coffe_ProjectContext' not found.")));
+
+builder.Services.AddDbContext<MagazinIdentityContext>(options =>options.UseSqlServer(builder.Configuration.GetConnectionString("Coffe_ProjectContext") ?? throw new InvalidOperationException("Connection string 'Coffe_ProjectContext' not found.")));
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<MagazinIdentityContext>();
+
+
 
 var app = builder.Build();
 
@@ -22,6 +28,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseAuthentication();;
 
 app.UseAuthorization();
 
