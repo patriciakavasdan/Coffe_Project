@@ -12,7 +12,7 @@ using System.Security.Policy;
 
 namespace Coffe_Project.Pages.Coffes
 {
-    public class EditModel : PageModel
+    public class EditModel : CoffeCategoriesPageModel
     {
         private readonly Coffe_Project.Data.Coffe_ProjectContext _context;
 
@@ -26,17 +26,22 @@ namespace Coffe_Project.Pages.Coffes
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Coffe == null)
+            if (id == null)
             {
                 return NotFound();
             }
+            Coffe = await _context.Coffe
+            .Include(b => b.Distribuitor)
+            .Include(b => b.CoffeCategories).ThenInclude(b => b.Category)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(m => m.ID == id);
 
-            var coffe =  await _context.Coffe.FirstOrDefaultAsync(m => m.ID == id);
-            if (coffe == null)
+            if (Coffe == null)
             {
                 return NotFound();
             }
-            Coffe = coffe;
+            PopulateAssignedCategoryData(_context, Coffe);
+            
             ViewData["DistribuitorName"] = new SelectList(_context.Set<Publisher>(), "ID","DistribuitorName");
 
             return Page();
@@ -44,37 +49,33 @@ namespace Coffe_Project.Pages.Coffes
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int? id, string[] selectedCategories)
         {
-            if (!ModelState.IsValid)
+            if (id == null)
             {
-                return Page();
+                return NotFound();
             }
-
-            _context.Attach(Coffe).State = EntityState.Modified;
-
-            try
+            //se va include Author conform cu sarcina de la lab 2
+            var coffeToUpdate = await _context.Coffe
+            .Include(i => i.Distribuitor)
+            .Include(i => i.CoffeCategories)
+            .ThenInclude(i => i.Category)
+            .FirstOrDefaultAsync(s => s.ID == id);
+            if (coffeToUpdate == null)
             {
+                return NotFound();
+            }
+            if (await TryUpdateModelAsync<Coffe>(coffeToUpdate, "Coffe",i => i.Denumire, i => i.Origine,i => i.Pret, i => i.DataFabricatiei, i => i.DistribuitorID))
+            {
+                UpdateCoffeCategories(_context, selectedCategories, coffeToUpdate);
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CoffeExists(Coffe.ID))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return RedirectToPage("./Index");
             }
 
-            return RedirectToPage("./Index");
+            UpdateCoffeCategories(_context, selectedCategories, coffeToUpdate);
+            PopulateAssignedCategoryData(_context, coffeToUpdate);
+            return Page();
         }
 
-        private bool CoffeExists(int id)
-        {
-          return _context.Coffe.Any(e => e.ID == id);
-        }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Coffe_Project.Data;
 using Coffe_Project.Models;
+using System.Net;
 
 namespace Coffe_Project.Pages.Coffes
 {
@@ -19,13 +20,29 @@ namespace Coffe_Project.Pages.Coffes
             _context = context;
         }
 
-        public IList<Coffe> Coffe { get;set; } = default!;
+        public IList<Coffe> Coffe { get; set; }
+        public CoffeData CoffeD { get; set; }
+        public int CoffeID { get; set; }
+        public int CategoryID { get; set; }
 
-        public async Task OnGetAsync()
+
+        public async Task OnGetAsync(int? id, int? categoryID)
         {
-            if (_context.Coffe != null)
+            CoffeD = new CoffeData();
+
+            CoffeD.Coffe = await _context.Coffe
+            .Include(b => b.Distribuitor)
+            .Include(b => b.CoffeCategories)
+            .ThenInclude(b => b.Category)
+            .AsNoTracking()
+            .OrderBy(b => b.Denumire)
+            .ToListAsync();
+            if (id != null)
             {
-                Coffe = await _context.Coffe.Include(b=>b.Distribuitor).ToListAsync();
+                CoffeID = id.Value;
+                Coffe coffe = CoffeD.Coffe
+                .Where(i => i.ID == id.Value).Single();
+                CoffeD.Categories = coffe.CoffeCategories.Select(s => s.Category);
             }
         }
     }

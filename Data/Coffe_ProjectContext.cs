@@ -17,5 +17,7 @@ namespace Coffe_Project.Data
         public DbSet<Coffe_Project.Models.Coffe> Coffe { get; set; } = default!;
 
         public DbSet<Coffe_Project.Models.Distribuitor> Distribuitor { get; set; }
+
+        public DbSet<Coffe_Project.Models.Category> Category { get; set; }
     }
 }

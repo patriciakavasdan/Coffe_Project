@@ -1,4 +1,4 @@
-﻿@page
+﻿@page 
 @model Coffe_Project.Pages.Coffes.IndexModel
 
 @{
@@ -28,13 +28,23 @@
             <th>
                 @Html.DisplayNameFor(model => model.Coffe[0].Distribuitor.DistribuitorName)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Coffe[0].CoffeCategories)
+            </th>
             
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Coffe) {
-        <tr>
+
+        @foreach (var item in Model.CoffeD.Coffe) {
+              string selectedRow = "";
+        if (item.ID == Model.CoffeID)
+            {
+                selectedRow = "table-success";
+            }
+            <tr class="@selectedRow">
+       
             <td>
                 @Html.DisplayFor(modelItem => item.Denumire)
             </td>
@@ -49,6 +59,14 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Distribuitor.DistribuitorName)
+                </td>
+                <td>
+                    @{
+                        foreach (var category in item.CoffeCategories)
+                        {
+                            @category.Category.ID @: @category.Category.CategoryName <br />
+                        }
+                    }
                 </td>
         
             <td>

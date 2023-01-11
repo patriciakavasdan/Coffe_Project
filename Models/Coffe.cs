@@ -21,5 +21,6 @@ namespace Coffe_Project.Models
         public DateTime DataFabricatiei { get; set; }
         public int? DistribuitorID { get; set; }
         public Distribuitor? Distribuitor { get; set; }
+        public ICollection<CoffeCategory>? CoffeCategories { get; set; }
     }
 }
